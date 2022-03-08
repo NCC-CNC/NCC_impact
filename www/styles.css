@@ -1,0 +1,30 @@
+
+/* nav bar */
+.navbar-default .navbar-brand{
+  color: #FFF;
+  font-family: Verdana;
+}
+
+.navbar-default {
+    background-color: #2D602E !important;
+}
+
+/* side panel */
+.side {
+  background-color: #FFF;
+  border: none;
+} 
+
+/* map side panel */
+#map_sidebar {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.sidebar-header{
+  background-color: #33862B !important;
+}
+
+.sidebar-tabs > li.active, .sidebar-tabs > ul > li.active {
+  background-color: #33862B !important;
+}
