@@ -37,3 +37,13 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+*.qgz
+
+data/intermediate/
+
+data/tmp/
+
+data/raw/NCC/
+
+data/
