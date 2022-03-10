@@ -20,6 +20,7 @@ PMP <- read_sf(file.path("data", "01_raw", "NCC", "Parcels_20210531_Achievements
 frst <- rast(file.path(
   "data", "02_intermediate", "HABITAT","CA_forest_VLCE_2015_forest_only_ha_proj_scale.tif"
 ))
+
 # Grassland
 gras <- rast(file.path(
   "data", "02_intermediate", "HABITAT","AAFC_LU2015_comb_masked_by_Prairie_grassland_comb.tif"
@@ -50,26 +51,26 @@ cfor <- rast(file.path(
   "data", "02_intermediate", "CLIMATE","fwdshortestpath.tif"
 ))
 
-cref <- rast(file.path("data", "02_intermediate", "CLIMATE", "
-                       NA_combo_refugia_sum45.tif"))
+cref <- rast(file.path(
+  "data", "02_intermediate", "CLIMATE", "NA_combo_refugia_sum45.tif"))
 
 # Carbon
 csta <- rast(file.path(
   "data", "02_intermediate", "CARBON","Carbon_Mitchell_2021_t.tif")) %>% 
   terra::crop(cfor)
 
-cseq <- rast(file.path("data", "02_intermediate", "CARBON", "Carbon_Potential_NFI_2011_CO2e_t_year.tif")) %>% terra::crop(cfor)
+cseq <- rast(file.path(
+  "data", "02_intermediate", "CARBON", "Carbon_Potential_NFI_2011_CO2e_t_year.tif")) %>% 
+  terra::crop(cfor)
 
 # Freshwater
 fwat <- rast(file.path(
-  "data", "02_intermediate", "ES",
-  "water_provision_2a_norm.tif"
+  "data", "02_intermediate", "ES","water_provision_2a_norm.tif"
 ))
 
 # Recreation
 recr <- rast(file.path(
-  "data", "02_intermediate", "ES",
-  "rec_pro_1a_norm.tif"
+  "data", "02_intermediate", "ES", "rec_pro_1a_norm.tif"
 ))
 
 # Stack environmental rasters --------------------------------------------------
@@ -110,6 +111,7 @@ END_NSC <- rast(file.path("data", "02_intermediate", "NSC_ENDsum.tif"))
 SPP_NSC <- rast(file.path("data", "02_intermediate", "NSC_SPPsum.tif"))
 
 # Stack species rasters --------------------------------------------------------
+
 spp_stack <- c(SAR, amph, bird, mamm, rept, SAR_NSC, END_NSC, SPP_NSC)
 spp_stack <- terra::setMinMax(spp_stack)
 names(spp_stack) <- c(
