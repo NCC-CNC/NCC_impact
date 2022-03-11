@@ -1,7 +1,5 @@
 library(sf)
 library(terra)
-library(gdalUtilities)
-library(fasterize)
 library(exactextractr)
 library(dplyr)
 library(tidyr)
@@ -161,7 +159,6 @@ rasters <- list(
   "Biodiversity_NSC" = SPP_NSC
 )
 
-
 # Project to WGS 84
 rasters_wgs <- purrr::map(rasters, .f = ~ {
   terra::project(.x, "epsg:4326")
@@ -176,5 +173,8 @@ purrr::map2(
   }
 )
 
+# Subset PMP for dev purposes
+PMP_sub <- PMP_tmp %>% filter(REGION == "Alberta Region")
+
 # Save data for shiny app
-save(PMP, PMP_feat_stack_mean, PMP_spp_stack_mean, PMP_tmp, file = file.path("data", "03_clean", "basedata.RData"))
+save(PMP, PMP_tmp, PMP_sub, PMP_feat_stack_mean, PMP_spp_stack_mean, file = file.path("data", "03_clean", "basedata.RData"))
