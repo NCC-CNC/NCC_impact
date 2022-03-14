@@ -15,6 +15,7 @@ library(sf)
 library(plotly)
 library(shinipsum)
 library(kableExtra)
+library(piggyback)
 
 # Read-in basedata -------------------------------------------------------------
 load(file.path('data','03_clean','basedata.RData'))
