@@ -6,9 +6,9 @@ shinyServer(function(input, output, session) {
     as.character(input$map_selection)
   })
   
-  # Basemap
-  user_basemap <- reactive({
-    as.character(input$basemap_selection)
+  # Conservation values (rasters)
+  user_raster <- reactive({
+    as.character(input$raster_selection)
   })
   
   # Initialize leaflet map -----------------------------------------------------
@@ -39,27 +39,40 @@ shinyServer(function(input, output, session) {
     if (user_map() == "Project Management Plan") {
       
       leafletProxy("ncc_map") %>%
-        clearGroup("pmp") %>%
+        addMapPane("pmp_pane", zIndex = 600) %>% # Always top layer
+        addProviderTiles(providers$Esri.WorldStreetMap, group = "Streets") %>%
+        addProviderTiles(providers$Esri.WorldImagery, group = "Imagery") %>%
+        addProviderTiles(providers$Esri.WorldTopoMap, group = "Topographic") %>%
+        
+        # Add project mgmt. polygon
         addPolygons(data = PMP_sub,
-                    layerId = ~id,
-                    group = "pmp",
+                    layerId = ~id, # click event id selector
+                    group = "Project Mgmt. Plan",
                     fillColor = "#33862B",
                     color = "black",
                     weight = 1,
                     fillOpacity = 0.7,
                     label = ~htmlEscape(NAME),
-                    popup = PMP_popup(PMP_sub),
-                    highlightOptions = highlightOptions(weight = 3, color = '#00ffd9'))
+                    popup = PMP_popup(PMP_sub), # fct_popup.R
+                    options = pathOptions(pane = "pmp_pane"),
+                    highlightOptions = highlightOptions(weight = 3, color = '#00ffd9')) %>%
+        
+        addLayersControl(overlayGroups = c("Project Mgmt. Plan"),
+                         baseGroups = c("Streets", "Imagery", "Topographic"),
+                         position = "bottomleft",
+                         options = layersControlOptions(collapsed = F)) 
       
-      
-      # PMP selection
+
+      # PMP selection ----------------------------------------------------------
       observeEvent(input$ncc_map_shape_click, {
         
-        print(input$ncc_map_shape_click$id)
-        shinyjs::show(id = "conditionalPanel")
+        shinyjs::hide(id = "conditional_well")
+        shinyjs::show(id = "conditional_plots")
         
+        # Filter PMP by user map click
         user_pmp <- PMP_tmp %>% dplyr::filter(id== as.numeric(input$ncc_map_shape_click$id))
         output$property <- renderText({as.character(user_pmp$PROPERTY_N)})
+        output$Area <- plot_consvar("Area_ha", user_pmp, "ha")
         output$Forest <- plot_consvar("Forest", user_pmp, "ha")
         output$Grassland <- plot_consvar("Grassland", user_pmp, "ha")
         output$Wetland <- plot_consvar("Wetland", user_pmp, "ha")
@@ -70,12 +83,33 @@ shinyServer(function(input, output, session) {
   }
   })  
   
-  # Update basemap ---------------------------------------------------------
-  observe({
-    leafletProxy('ncc_map') %>%
-      clearTiles() %>%
-      addProviderTiles(user_basemap())
+  # Update map with conservation value -----------------------------------------
+  observeEvent(user_raster(),{
+    
+    if(user_raster() != F) {
+      
+      cons_pal <- colorNumeric(palette = "viridis", c(0,100))
+      leafletProxy("ncc_map") %>%
+        clearGroup(group= "convalue") %>%
+        addMapPane("raster_map", zIndex = 400) %>%
+        addTiles(urlTemplate = paste0("tiles/", user_raster(), "/{z}/{x}/{y}.png"), 
+                 options = pathOptions(pane = "raster_map"), 
+                 group = "convalue") %>%
+        addLegend(position = "topleft", 
+                  pal = cons_pal, 
+                  values = c(0,100), 
+                  opacity = 1,
+                  layerId = "cons_legend", 
+                  className = "info legend leaflet-control sidelegend")
+      
+    } else {
+      leafletProxy("ncc_map") %>%
+        clearGroup(group= "convalue") %>%
+        removeControl("cons_legend")
+    }
+    
   })
-
+  
+#-------------------------------------------------------------------------------
   # Close server
 })

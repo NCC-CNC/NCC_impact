@@ -1,6 +1,7 @@
 library(shiny)
 library(shinydashboard)
 library(leaflet)
+library(leaflet.extras)
 library(leaflet.extras2)
 library(shinyWidgets)
 library(shinyFeedback)
@@ -12,6 +13,7 @@ library(shinyjs)
 library(tidyverse)
 library(sf)
 library(plotly)
+library(shinipsum)
 
 # Read-in basedata -------------------------------------------------------------
 load(file.path('data','03_clean','basedata.RData'))
