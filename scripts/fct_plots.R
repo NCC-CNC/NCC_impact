@@ -1,3 +1,4 @@
+
 bar1 <- function(current = NULL, potential = NULL, goal = NULL, label = NULL) {
   # create data
   d <- tibble(
@@ -44,12 +45,14 @@ bar1 <- function(current = NULL, potential = NULL, goal = NULL, label = NULL) {
 }
 
 
+
+# User this function inside shiny
 plot_consvar <- function(consvar, user_pmp, unit) {
 
     renderPlotly({
     bar1(current = reg_goals %>% filter(Regions == user_pmp$Regions) %>%
            filter(Category == "current") %>% pull(consvar), 
-         potential = user_pmp$Grassland, 
+         potential = user_pmp[[consvar]], 
          goal = reg_goals %>% filter(Regions == user_pmp$Regions) %>%
            filter(Category == "goal") %>% pull(consvar),
          label = paste0(consvar, " (",unit,")")
