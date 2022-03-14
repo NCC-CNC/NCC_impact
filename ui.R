@@ -11,11 +11,12 @@ shinyUI(
       sidebarLayout(
         sidebarPanel(class = "side",
           tabsetPanel(
-            tabPanel("Histograms",
+            tabPanel("Overview",#-----------------------------------------------
+            br(),
+            wellPanel(random_text(nwords = 75))),
+            
+            tabPanel("Histograms", #--------------------------------------------
               br(),
-              (div(id = "conditional_well",
-              wellPanel(random_text(nwords = 75)))),       
-                     
               hidden(div(id = "conditional_plots",        
               withSpinner(color = "#33862B", size = 1,
               tagList(
@@ -27,13 +28,20 @@ shinyUI(
               plotlyOutput("River",height=100,width="100%"),
               plotlyOutput("Lakes",height=100,width="100%"),
               plotOutput("SAR",height=100,width="100%"),
-              plotOutput("Birds",height=100,width="100%")))))
-              # Close Histograms tab
-              ),
+              plotOutput("Birds",height=100,width="100%")))))),
             
-            tabPanel("Table"),
-            tabPanel("Report"),
-            tabPanel("Help")
+            tabPanel("Table",#--------------------------------------------------
+              br(),
+              textOutput("property2"),
+              tableOutput("pmp_table"), width="100%"),
+            
+            tabPanel("Report",#-------------------------------------------------
+              br(),
+              wellPanel(random_text(nwords = 75)),
+              actionButton("view_report", "View Report", width = "100%")),
+            
+            # Logo always on bottom of side panel
+            img(class='logo', src='logos/stacked_logo_rgb_en.png')
           
           # Close tabsetPanel    
           )

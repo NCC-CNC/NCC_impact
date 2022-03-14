@@ -14,7 +14,9 @@ shinyServer(function(input, output, session) {
   # Initialize leaflet map -----------------------------------------------------
   output$ncc_map <- renderLeaflet({
     leaflet() %>%
-      addProviderTiles(providers$Esri.WorldStreetMap) %>%
+      addProviderTiles(providers$Esri.WorldTopoMap, group = "Topographic") %>%
+      addProviderTiles(providers$Esri.WorldImagery, group = "Imagery") %>%
+      addProviderTiles(providers$Esri.WorldStreetMap, group = "Streets") %>%
       fitBounds(-141.00002, 41.68132, -52.68001, 76.59341) %>%
 
       addSidebar(
@@ -40,9 +42,6 @@ shinyServer(function(input, output, session) {
       
       leafletProxy("ncc_map") %>%
         addMapPane("pmp_pane", zIndex = 600) %>% # Always top layer
-        addProviderTiles(providers$Esri.WorldStreetMap, group = "Streets") %>%
-        addProviderTiles(providers$Esri.WorldImagery, group = "Imagery") %>%
-        addProviderTiles(providers$Esri.WorldTopoMap, group = "Topographic") %>%
         
         # Add project mgmt. polygon
         addPolygons(data = PMP_sub,
@@ -66,11 +65,12 @@ shinyServer(function(input, output, session) {
       # PMP selection ----------------------------------------------------------
       observeEvent(input$ncc_map_shape_click, {
         
-        shinyjs::hide(id = "conditional_well")
+        # Project mgmt. plan user selection
+        user_pmp <- PMP_tmp %>% dplyr::filter(id== as.numeric(input$ncc_map_shape_click$id))
+        
+        # Generate histograms
         shinyjs::show(id = "conditional_plots")
         
-        # Filter PMP by user map click
-        user_pmp <- PMP_tmp %>% dplyr::filter(id== as.numeric(input$ncc_map_shape_click$id))
         output$property <- renderText({as.character(user_pmp$PROPERTY_N)})
         output$Area <- plot_consvar("Area_ha", user_pmp, "ha")
         output$Forest <- plot_consvar("Forest", user_pmp, "ha")
@@ -78,6 +78,11 @@ shinyServer(function(input, output, session) {
         output$Wetland <- plot_consvar("Wetland", user_pmp, "ha")
         output$River <- plot_consvar("River", user_pmp, "km")
         output$Lakes <- plot_consvar("Lakes", user_pmp, "ha")
+        
+        # Generate Table
+        output$property2 <- renderText({as.character(user_pmp$PROPERTY_N)})
+        output$pmp_table <- function() {PMP_table(user_pmp)} 
+        
       })
     
   }
