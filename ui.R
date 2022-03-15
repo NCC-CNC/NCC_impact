@@ -7,7 +7,7 @@ shinyUI(
       useShinyFeedback(),
       useShinyjs(),
 
-      # Side-panel: histograms -----------------------------------------------------
+      # Side-panel:-------------------------------------------------------------
       sidebarLayout(
         sidebarPanel(class = "side",
           tabsetPanel(
@@ -15,25 +15,25 @@ shinyUI(
             br(),
             wellPanel(random_text(nwords = 75))),
             
-            tabPanel("Histograms", #--------------------------------------------
-              br(),
-              hidden(div(id = "conditional_plots",        
-              withSpinner(color = "#33862B", size = 1,
-              tagList(
-              textOutput("property"),
-              plotlyOutput("Area",height=100,width="100%"),
-              plotlyOutput("Forest",height=100,width="100%"),
-              plotlyOutput("Grassland",height=100,width="100%"),
-              plotlyOutput("Wetland",height=100,width="100%"),
-              plotlyOutput("River",height=100,width="100%"),
-              plotlyOutput("Lakes",height=100,width="100%"),
-              plotOutput("SAR",height=100,width="100%"),
-              plotOutput("Birds",height=100,width="100%")))))),
+          tabPanel("Table",#----------------------------------------------------
+            br(),
+            property_title_UI(id = "property_mod1"),
+            tableOutput("pmp_table"), width="100%"),
             
-            tabPanel("Table",#--------------------------------------------------
-              br(),
-              textOutput("property2"),
-              tableOutput("pmp_table"), width="100%"),
+            tabPanel("Histograms", #--------------------------------------------
+             br(),
+             hidden(div(id = "conditional_plots", 
+                        withSpinner(color = "#33862B", size = 1,
+              tagList(
+                property_title_UI(id = "property_mod2"),
+                plotlyOutput("Area",height=100,width="100%"),
+                plotlyOutput("Forest",height=100,width="100%"),
+                plotlyOutput("Grassland",height=100,width="100%"),
+                plotlyOutput("Wetland",height=100,width="100%"),
+                plotlyOutput("River",height=100,width="100%"),
+                plotlyOutput("Lakes",height=100,width="100%"),
+                plotOutput("SAR",height=100,width="100%"),
+                plotOutput("Birds",height=100,width="100%")))))),            
             
             tabPanel("Report",#-------------------------------------------------
               br(),

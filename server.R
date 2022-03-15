@@ -71,7 +71,7 @@ shinyServer(function(input, output, session) {
         # Generate histograms
         shinyjs::show(id = "conditional_plots")
         
-        output$property <- renderText({as.character(user_pmp$PROPERTY_N)})
+        property_title_SERVER(id = "property_mod2", data=user_pmp)
         output$Area <- plot_consvar("Area_ha", user_pmp, "ha")
         output$Forest <- plot_consvar("Forest", user_pmp, "ha")
         output$Grassland <- plot_consvar("Grassland", user_pmp, "ha")
@@ -80,7 +80,7 @@ shinyServer(function(input, output, session) {
         output$Lakes <- plot_consvar("Lakes", user_pmp, "ha")
         
         # Generate Table
-        output$property2 <- renderText({as.character(user_pmp$PROPERTY_N)})
+        property_title_SERVER(id = "property_mod1", data=user_pmp)
         output$pmp_table <- function() {PMP_table(user_pmp)} 
         
       })

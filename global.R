@@ -23,6 +23,9 @@ load(file.path('data','03_clean','basedata.RData'))
 # Read-in regional goals -------------------------------------------------------
 reg_goals <- read_csv(file.path('data','sheets','Regional_goals.csv'))
 
+# source shiny mods
+source(file.path("scripts", "shinymods.R"))
+
 # Source functions
 source(file.path("scripts", "fct_popup.R"))
 source(file.path("scripts", "fct_plots.R"))

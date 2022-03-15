@@ -81,15 +81,8 @@
 
 } 
 
-#property {
-  font-weight: 800;
-  font-family: Verdana;
-  text-align: center;
-  font-size: 16px;
-  margin-top: 18px;
-}
-
-#property2 {
+/* table and histogram titles */
+.property-title {
   font-weight: 800;
   font-family: Verdana;
   text-align: center;
@@ -97,3 +90,7 @@
   margin-top: 18px;
   margin-bottom: 10px;
 }
+  
+
+
+
