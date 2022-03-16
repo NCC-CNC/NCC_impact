@@ -81,8 +81,11 @@ shinyServer(function(input, output, session) {
         
         # Generate Table
         property_title_SERVER(id = "property_mod1", data=user_pmp)
-        output$pmp_table <- function() {PMP_table(user_pmp)} 
-        
+        pmp_table_SERVER(id = "pmp_table_mod1", 
+                         data = user_pmp,
+                         row_names = species_row_names,
+                         con_values = species_con_values)
+      # Close map-click
       })
     
   }

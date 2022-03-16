@@ -13,14 +13,15 @@ shinyUI(
           tabsetPanel(
             tabPanel("Overview",#-----------------------------------------------
             br(),
-            wellPanel(random_text(nwords = 75))),
+            wellPanel(random_text(nwords = 150))),
             
           tabPanel("Table",#----------------------------------------------------
             br(),
             property_title_UI(id = "property_mod1"),
-            tableOutput("pmp_table"), width="100%"),
+            pmp_table_UI(id = "pmp_table_mod1"), width="100%"),
+            #tableOutput("pmp_table"), width="100%"),
             
-            tabPanel("Histograms", #--------------------------------------------
+            tabPanel("Plots", #-------------------------------------------------
              br(),
              hidden(div(id = "conditional_plots", 
                         withSpinner(color = "#33862B", size = 1,
