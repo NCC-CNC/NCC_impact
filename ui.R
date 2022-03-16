@@ -59,15 +59,9 @@ shinyUI(
           # Main leaflet map, sidebars------------------------------------------
           sidebar_tabs(
             id = "map_sidebar",
-            list(icon("map"), icon("upload")),
-            sidebar_pane(
-              title = "Select Map", id = "select_map_sp", icon = icon("caret-right"),
-              selectInput(
-                inputId = "map_selection", "", width = "100%",
-                choices = c("Project Management Plan","Themes")
-              ),
-              wellPanel(random_text(nwords = 75))
-            ),
+            list(icon("upload")),
+            
+            # Upload shapefile
             sidebar_pane(
               title = "Upload Project", id = "upload_sp", icon = icon("caret-right"),
               br(),
