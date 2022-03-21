@@ -12,42 +12,35 @@ PMP <- read_sf(file.path("data", "01_raw", "NCC", "Parcels_20210531_Achievements
   # Set to rater projection (not sure about this coordinate system...)
   st_transform(crs = st_crs("+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs "))
 
-# Read-in environmental rasters: -----------------------------------------------
+# Read-in feature themes: ------------------------------------------------------
 
 # Forest
 frst <- rast(file.path(
-  "data", "02_intermediate", "HABITAT","CA_forest_VLCE_2015_forest_only_ha_proj_scale.tif"
-))
+  "data", "02_intermediate", "HABITAT","CA_forest_VLCE_2015_forest_only_ha_proj_scale.tif"))
 
 # Grassland
 gras <- rast(file.path(
-  "data", "02_intermediate", "HABITAT","AAFC_LU2015_comb_masked_by_Prairie_grassland_comb.tif"
-))
+  "data", "02_intermediate", "HABITAT","AAFC_LU2015_comb_masked_by_Prairie_grassland_comb.tif"))
 
 # Wetlands
 wetl <- rast(file.path(
-  "data", "02_intermediate", "HABITAT","Wetland_comb_proj_diss_90m_Arc.tif"
-))
+  "data", "02_intermediate", "HABITAT","Wetland_comb_proj_diss_90m_Arc.tif"))
 
 # Rivers
 rivr <- rast(file.path(
-  "data", "02_intermediate", "HABITAT","grid_1km_water_linear_flow_length_1km.tif"
-))
+  "data", "02_intermediate", "HABITAT","grid_1km_water_linear_flow_length_1km.tif"))
 
 # Lakes
 laks <- rast(file.path(
-  "data", "02_intermediate", "HABITAT","Lakes_CanVec_50k_ha.tif"
-))
+  "data", "02_intermediate", "HABITAT","Lakes_CanVec_50k_ha.tif"))
 
 # Shoreline
 shrl <- rast(file.path(
-  "data", "02_intermediate", "HABITAT","Shoreline.tif"
-))
+  "data", "02_intermediate", "HABITAT","Shoreline.tif"))
 
 # Climate
 cfor <- rast(file.path(
-  "data", "02_intermediate", "CLIMATE","fwdshortestpath.tif"
-))
+  "data", "02_intermediate", "CLIMATE","fwdshortestpath.tif"))
 
 cref <- rast(file.path(
   "data", "02_intermediate", "CLIMATE", "NA_combo_refugia_sum45.tif"))
@@ -62,16 +55,12 @@ cseq <- rast(file.path(
   terra::crop(cfor)
 
 # Freshwater
-fwat <- rast(file.path(
-  "data", "02_intermediate", "ES","water_provision_2a_norm.tif"
-))
+fwat <- rast(file.path("data", "02_intermediate", "ES","water_provision_2a_norm.tif"))
 
 # Recreation
-recr <- rast(file.path(
-  "data", "02_intermediate", "ES", "rec_pro_1a_norm.tif"
-))
+recr <- rast(file.path("data", "02_intermediate", "ES", "rec_pro_1a_norm.tif"))
 
-# Stack environmental rasters --------------------------------------------------
+# Stack feature rasters --------------------------------------------------------
 
 feat_stack <- c(frst, gras, wetl, rivr, laks, shrl, cfor, cref, csta, cseq, fwat, recr)
 feat_stack <- terra::setMinMax(feat_stack)
@@ -82,7 +71,7 @@ names(feat_stack) <- c(
   "Freshwater", "Recreation"
 )
 
-# Read-in species rasters: -----------------------------------------------------
+# Read-in species themes: ------------------------------------------------------
 
 # Species at risk - ECCC
 SAR <- rast(file.path("data", "02_intermediate", "SAR_sum.tif"))
@@ -146,35 +135,36 @@ PMP_tmp$id <- 1:nrow(PMP_tmp)
 # Project PMP to WGS 84
 PMP <- PMP %>% st_transform(crs = st_crs(4326))
 
-# Save clean data --------------------------------------------------------------
-
-rasters <- list(
-  "Forest" = frst, "Grassland" = gras, "Wetland" = wetl, "River" = rivr,
-  "Lakes" = laks, "Shoreline" = shrl, "Climate_velocity" = cfor,
-  "Climate_refugia" = cref, "Carbon_current" = csta,
-  "Carbon_potential" = cseq, "Freshwater" = fwat, "Recreation" = recr,
-  "Species_at_Risk_ECCC" = SAR, "Amphibians_IUCN" = amph,
-  "Birds_IUCN" = bird, "Mammals_IUCN" = mamm, "Reptiles_IUCN" = rept,
-  "Species_at_Risk_NSC" = SAR_NSC, "Endemics_NSC" = END_NSC,
-  "Biodiversity_NSC" = SPP_NSC
-)
-
-# Project to WGS 84
-rasters_wgs <- purrr::map(rasters, .f = ~ {
-  terra::project(.x, "epsg:4326")
-})
-
-# Set 0 to NA and save to disk to tile in QGIS
-purrr::map2(
-  rasters_wgs,
-  names(rasters_wgs),
-  ~ {
-    terra::classify(.x, cbind(0, NA), filename = file.path("data", "03_clean", "themes", paste0(.y, ".tif")))
-  }
-)
+# # Save clean data --------------------------------------------------------------
+# 
+# rasters <- list(
+#   "Forest" = frst, "Grassland" = gras, "Wetland" = wetl, "River" = rivr,
+#   "Lakes" = laks, "Shoreline" = shrl, "Climate_velocity" = cfor,
+#   "Climate_refugia" = cref, "Carbon_current" = csta,
+#   "Carbon_potential" = cseq, "Freshwater" = fwat, "Recreation" = recr,
+#   "Species_at_Risk_ECCC" = SAR, "Amphibians_IUCN" = amph,
+#   "Birds_IUCN" = bird, "Mammals_IUCN" = mamm, "Reptiles_IUCN" = rept,
+#   "Species_at_Risk_NSC" = SAR_NSC, "Endemics_NSC" = END_NSC,
+#   "Biodiversity_NSC" = SPP_NSC
+# )
+# 
+# # Project to WGS 84
+# rasters_wgs <- purrr::map(rasters, .f = ~ {
+#   terra::project(.x, "epsg:4326")
+# })
+# 
+# # Set 0 to NA and save to disk to tile in QGIS
+# purrr::map2(
+#   rasters_wgs,
+#   names(rasters_wgs),
+#   ~ {
+#     terra::classify(.x, cbind(0, NA), filename = file.path("data", "03_clean", "themes", paste0(.y, ".tif")))
+#   }
+# )
 
 # Subset PMP for dev purposes
 PMP_sub <- PMP_tmp %>% filter(REGION == "Alberta Region")
 
 # Save data for shiny app
-save(PMP, PMP_tmp, PMP_sub, PMP_feat_stack_mean, PMP_spp_stack_mean, file = file.path("data", "03_clean", "basedata.RData"))
+save(PMP, PMP_tmp, PMP_sub, PMP_feat_stack_mean, PMP_spp_stack_mean,
+     file = file.path("data", "03_clean", "basedata.RData"))
