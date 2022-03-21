@@ -92,5 +92,17 @@
 }
   
 
+hr {
+  margin-top: 0px;
+}
 
+.shiny-notification-message {
+	background-color: #4BB543;
+	color:#000000;
+	font-weight: 900;
+}
 
+#shiny-notification-panel {
+  bottom: 60px;
+  right: 110px;
+}

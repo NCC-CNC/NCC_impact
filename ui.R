@@ -19,8 +19,7 @@ shinyUI(
             br(),
             property_title_UI(id = "property_mod1"),
             pmp_table_UI(id = "pmp_table_mod1"), width="100%"),
-            #tableOutput("pmp_table"), width="100%"),
-            
+
             tabPanel("Plots", #-------------------------------------------------
              br(),
              hidden(div(id = "conditional_plots", 
@@ -40,6 +39,11 @@ shinyUI(
               br(),
               wellPanel(random_text(nwords = 75)),
               actionButton("view_report", "View Report", width = "100%")),
+          
+          tabPanel("Engagement",#------------------------------------------------
+                   br(),
+                   wellPanel(random_text(nwords = 75))),
+          
             
             # Logo always on bottom of side panel
             img(class='logo', src='logos/stacked_logo_rgb_en.png')
@@ -63,20 +67,30 @@ shinyUI(
             
             # Upload shapefile
             sidebar_pane(
-              title = "Upload Project", id = "upload_sp", icon = icon("caret-right"),
+              title = "New Property Assesment", id = "upload_sp", icon = icon("caret-right"),
               br(),
               wellPanel(random_text(nwords = 75)),
-              fileInput(
-                inputId = "project_upload", "", width = "100%",
+              fluidRow(column(9,
+              fileInput(label = NULL, 
+                buttonLabel = tags$div("Upload", style = "width: 90px"),        
+                inputId = "pmp_upload", "", width = "100%",
                 accept = c(".shp", ".dbf", ".sbn", ".sbx", ".shx", ".prj"),
-                multiple = TRUE),
-              actionButton(inputId = "clear_project", label = "Clear Upload", width = "100%"))
+                multiple = TRUE)),
+              column(3,
+              actionButton(inputId = "clear_project", label = "Clear", width = "100%"))),
+              
+              hr(),
+              extractions_UI(id = "extractions_mod1"),
+              br(),br(),
+              actionButton(inputId = "download", label = "Download Property", width = "100%"),
+              
+              )
           ),
 
           # Raster tiles panel--------------------------------------------------
           tags$div(
             class = "raster-controls",
-            h4(class = "raster-title", "Cons. Values"),
+            h4(class = "raster-title", "Impact Themes"),
             selectInput(
               inputId = "raster_selection", "", width = "100%",
               choices = c("No Selection" = F, "Forest %" = "forest", "Grassland" = "grassland", 

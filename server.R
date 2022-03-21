@@ -7,6 +7,11 @@ shinyServer(function(input, output, session) {
     as.character(input$raster_selection)
   })
   
+  # PMP user shapefile upload
+  user_pmp_upload_path <- reactive({input$pmp_upload})
+  user_pmp <- read_shp(user_pmp_upload_path) 
+  user_pmp_FLAG <- reactiveVal(0)
+
   # Initialize leaflet map -----------------------------------------------------
   output$ncc_map <- renderLeaflet({
     leaflet() %>%
@@ -14,6 +19,12 @@ shinyServer(function(input, output, session) {
       addProviderTiles(providers$Esri.WorldImagery, group = "Imagery") %>%
       addProviderTiles(providers$Esri.WorldStreetMap, group = "Streets") %>%
       fitBounds(-141.00002, 41.68132, -52.68001, 76.59341) %>%
+      
+      addSidebar(id = "map_sidebar",
+                 options = list(position = "right", fit = FALSE)) %>%
+      
+      addMiniMap(tiles = providers$Esri.WorldStreetMap, toggleDisplay = T,
+                 position = "bottomleft") %>%
       
       addMapPane("pmp_pane", zIndex = 600) %>% # Always top layer
       
@@ -34,13 +45,8 @@ shinyServer(function(input, output, session) {
       addLayersControl(overlayGroups = c("Project Mgmt. Plan"),
                        baseGroups = c("Streets", "Imagery", "Topographic"),
                        position = "bottomleft",
-                       options = layersControlOptions(collapsed = F)) %>%       
+                       options = layersControlOptions(collapsed = F))       
       
-      addSidebar(id = "map_sidebar",
-                options = list(position = "right", fit = FALSE)) %>%
-      
-      addMiniMap(tiles = providers$Esri.WorldStreetMap, toggleDisplay = T,
-                 position = "bottomleft")
   })
 
   # PMP selection --------------------------------------------------------------
@@ -99,5 +105,17 @@ shinyServer(function(input, output, session) {
   })
   
 #-------------------------------------------------------------------------------
+
+  # Display user pmp boundaries
+  observeEvent(user_pmp_upload_path(), {
+    display_shp(user_pmp, "ncc_map")
+  })
+  
+  # Extract themes to user pmp and update map
+  proxy <- leafletProxy("ncc_map")
+  extractions_SERVER(id = "extractions_mod1", user_pmp, feat_stack, spp_stack, proxy)
+  
+#-------------------------------------------------------------------------------  
+  
   # Close server
 })
