@@ -1,14 +1,19 @@
 # Run extractions
-extractions_UI <- function(id) {
+extractions_UI <- function(id, label = "ui1UI") {
   ns <- NS(id)
   tagList(
     br(),
-    actionButton(inputId = ns("run_extractions"), label = "Run Extractions", width = "100%")
+    fluidRow(column(8, offset = 2, align = "center",
+    actionButton(inputId = ns("run_extractions"), label = "Extract Impact Themes", 
+                 icon = icon("play"), width = "100%")))
   )
 }
 
 extractions_SERVER <- function(id, user_pmp, feat_stack, spp_stack, proxy) {
   moduleServer(id, function(input, output, session) {
+    
+    # Return 
+    to_return <- reactiveValues(trigger = NULL, flag = NULL, variable = NULL )
     
     observeEvent(input$run_extractions, {
       
@@ -45,7 +50,6 @@ extractions_SERVER <- function(id, user_pmp, feat_stack, spp_stack, proxy) {
        
        # Assign unique-ID
        user_pmp_mean$id <- 1:nrow(user_pmp_mean)
-       print(st_area(user_pmp_mean))
        
        # Update map---------------------------------------------------------------
        user_extent <- st_bbox(user_pmp_mean)
@@ -55,6 +59,8 @@ extractions_SERVER <- function(id, user_pmp, feat_stack, spp_stack, proxy) {
                    lng2 =  user_extent[[3]], lat2 =  user_extent[[4]]) %>%
          addPolygons(data = user_pmp_mean,
                      layerId = ~id, # click event id selector
+                     label = ~htmlEscape(NAME),
+                     popup = PMP_popup(user_pmp_mean),
                      options = pathOptions(clickable = TRUE),
                      weight = 1, 
                      fillColor = "green",
@@ -63,10 +69,20 @@ extractions_SERVER <- function(id, user_pmp, feat_stack, spp_stack, proxy) {
                      highlightOptions = highlightOptions(weight = 3, 
                                                          color = '#00ffd9')) 
        
+       # Enable generate report button
+       shinyjs::enable("run_report")
+       
+
+       
        # Finish progress
        incProgress(3)
        removeNotification(id_)
        showNotification("... Finished!", duration = 0, closeButton=TRUE, type = 'message')
+       
+       # Populate return objects
+       to_return$flag <- 1
+       to_return$trigger <- input$run_extractions
+       to_return$user_pmp <- user_pmp_mean
        
      # Close try 
      },
@@ -82,6 +98,11 @@ extractions_SERVER <- function(id, user_pmp, feat_stack, spp_stack, proxy) {
    })     
   # Close observeEvent           
   })
+  
+  # Return flag that indicates that the extractions ran
+    return(to_return)
+
+
 # Close module server  
 })
 # Closer extraction_SERVER  
