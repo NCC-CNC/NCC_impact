@@ -8,9 +8,13 @@ shinyServer(function(input, output, session) {
   })
   
   # PMP user shapefile upload
-  user_pmp_upload_path <- reactive({input$pmp_upload})
+  user_pmp_upload_path <- reactive({input$upload_pmp})
   user_pmp <- read_shp(user_pmp_upload_path) 
   user_pmp_FLAG <- reactiveVal(0)
+  
+  # Disable extraction run
+  shinyjs::disable("extractions_mod1-run_extractions")
+  shinyjs::disable("report_mod1-run_report")
 
   # Initialize leaflet map -----------------------------------------------------
   output$ncc_map <- renderLeaflet({
@@ -51,6 +55,11 @@ shinyServer(function(input, output, session) {
 
   # PMP selection --------------------------------------------------------------
   observeEvent(input$ncc_map_shape_click, {
+ 
+   
+    if(is.null(input$ncc_map_shape_click$id)){} # Do nothing if no ID
+    
+    else { # -------------------------------------------------------------------
     
     # Project mgmt. plan user selection
     user_pmp <- PMP_tmp %>% 
@@ -73,6 +82,7 @@ shinyServer(function(input, output, session) {
                      data = user_pmp,
                      row_names = species_row_names,
                      con_values = species_con_values)
+    }  
   # Close map-click
   })
     
@@ -108,12 +118,38 @@ shinyServer(function(input, output, session) {
 
   # Display user pmp boundaries
   observeEvent(user_pmp_upload_path(), {
+    
     display_shp(user_pmp, "ncc_map")
-  })
+    
+    # Enable extract impact themes button
+    shinyjs::enable("extractions_mod1-run_extractions")
+    
+    })
   
   # Extract themes to user pmp and update map
   proxy <- leafletProxy("ncc_map")
-  extractions_SERVER(id = "extractions_mod1", user_pmp, feat_stack, spp_stack, proxy)
+  extracted  <- extractions_SERVER(id = "extractions_mod1", user_pmp, feat_stack, spp_stack, proxy)
+  
+  # Clear user pmp
+  observeEvent(input$clear_pmp, {
+    clear_shp("upload_pmp", "ncc_map", "User PMP")
+    # Disable run button
+    shinyjs::disable("extractions_mod1-run_extractions")
+    shinyjs::disable("report_mod1-run_report")
+    })  
+  
+  # Enable report button
+  observeEvent(extracted$trigger, {
+    
+    if(extracted$flag == 1){
+      shinyjs::enable("report_mod1-run_report")
+      
+      print(extracted$user_pmp)
+      
+      
+    }
+    
+  })
   
 #-------------------------------------------------------------------------------  
   

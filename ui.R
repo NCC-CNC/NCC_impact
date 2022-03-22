@@ -67,24 +67,24 @@ shinyUI(
             
             # Upload shapefile
             sidebar_pane(
-              title = "New Property Assesment", id = "upload_sp", icon = icon("caret-right"),
+              title = "New Property Assessment", id = "upload_sp", icon = icon("caret-right"),
               br(),
               wellPanel(random_text(nwords = 75)),
               fluidRow(column(9,
               fileInput(label = NULL, 
                 buttonLabel = tags$div("Upload", style = "width: 90px"),        
-                inputId = "pmp_upload", "", width = "100%",
+                inputId = "upload_pmp", "", width = "100%",
                 accept = c(".shp", ".dbf", ".sbn", ".sbx", ".shx", ".prj"),
                 multiple = TRUE)),
               column(3,
-              actionButton(inputId = "clear_project", label = "Clear", width = "100%"))),
+              actionButton(inputId = "clear_pmp", label = "Clear", width = "100%"))),
               
               hr(),
               extractions_UI(id = "extractions_mod1"),
-              br(),br(),
-              actionButton(inputId = "download", label = "Download Property", width = "100%"),
-              
-              )
+              br(),
+              report_UI(id = "report_mod1"))
+             
+          # Close map-upload sidebar
           ),
 
           # Raster tiles panel--------------------------------------------------

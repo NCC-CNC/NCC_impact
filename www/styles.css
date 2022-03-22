@@ -104,5 +104,9 @@ hr {
 
 #shiny-notification-panel {
   bottom: 60px;
-  right: 110px;
+  right: 30px;
+}
+
+.progress-bar {
+  background-color: #33862B;
 }
