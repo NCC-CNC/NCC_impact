@@ -9,7 +9,7 @@ comparison_UI <- function(id) {
   )
 }
 
-comparison_SERVER <- function(id, modal_trigger, compare_tbl, compare_plt) {
+comparison_SERVER <- function(id, modal_trigger, compare_tbl, compare_plt, user_pmp_mean) {
   moduleServer(id, function(input, output, session) {
     
     ns <- NS(id)
@@ -19,10 +19,11 @@ comparison_SERVER <- function(id, modal_trigger, compare_tbl, compare_plt) {
       # Do not execute until comparison btn is clicked
       if (compare_tbl() !=0 | compare_plt() !=0) {  
         
-        print(" compare button is working!")
+        print("inside modal")
+        print(user_pmp_mean())
+        
         updateNumericInput(session = session, inputId = 'ghost_trigger', value = input$ghost_trigger + 1 )
         
-        print(input$ghost_trigger)
         
         output$compare_ui <- renderUI({
           

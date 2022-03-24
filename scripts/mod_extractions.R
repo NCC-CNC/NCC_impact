@@ -59,8 +59,8 @@ extractions_SERVER <- function(id, user_pmp, feat_stack, spp_stack, proxy) {
                    lng2 =  user_extent[[3]], lat2 =  user_extent[[4]]) %>%
          addPolygons(data = user_pmp_mean,
                      layerId = ~id, # click event id selector
-                     label = ~htmlEscape(NAME),
-                     popup = PMP_popup(user_pmp_mean),
+                     #label = ~htmlEscape(NAME),
+                     #popup = PMP_popup(user_pmp_mean),
                      options = pathOptions(clickable = TRUE),
                      weight = 1, 
                      fillColor = "green",
@@ -69,15 +69,16 @@ extractions_SERVER <- function(id, user_pmp, feat_stack, spp_stack, proxy) {
                      highlightOptions = highlightOptions(weight = 3, 
                                                          color = '#00ffd9')) 
        
-       # Finish progress
-       incProgress(3)
-       removeNotification(id_)
-       showNotification("... Extractions Completed!", duration = 0, closeButton=TRUE, type = 'message')
        
        # Populate return objects
        to_return$flag <- 1
        to_return$trigger <- input$run_extractions
-       to_return$user_pmp_mean <- user_pmp_mean
+       to_return$user_pmp_mean <- user_pmp_mean       
+       
+       # Finish progress
+       incProgress(3)
+       removeNotification(id_)
+       showNotification("... Extractions Completed!", duration = 0, closeButton=TRUE, type = 'message')
        
      # Close try 
      },

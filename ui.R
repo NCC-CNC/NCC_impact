@@ -21,19 +21,25 @@ shinyUI(
           
           ## Table ----     
           tabPanel("Table",
+                   
+           tags$div(class = "btn-compare",
+                    actionButton(style = "float: right;", inputId = "compare_tbl", 
+                                 label = "Compare", icon = icon("sliders-h"))),                   
+
             br(),
-            actionButton(style = "float: right;", inputId = "compare_tbl", 
-                         label = "Compare PMP", icon = icon("sliders-h")),
-            
             property_title_UI(id = "property_mod1"),
             pmp_table_UI(id = "pmp_table_mod1"), width="100%"),
           
+          
+          
           ## Plots ----  
           tabPanel("Plots", 
-             br(),
-             actionButton(style = "float: right;", inputId = "compare_plt", 
-                          label = "Compare PMP", icon = icon("sliders-h")),
+                  
+         tags$div(class= "btn-compare",
+                  actionButton(style = "float: right;", inputId = "compare_plt", 
+                               label = "Compare", icon = icon("sliders-h"))),                    
              
+             br(),
              hidden(div(id = "conditional_plots", 
                         withSpinner(color = "#33862B", size = 1,
               tagList(
@@ -43,9 +49,9 @@ shinyUI(
                 plotlyOutput("Grassland",height=100,width="100%"),
                 plotlyOutput("Wetland",height=100,width="100%"),
                 plotlyOutput("River",height=100,width="100%"),
-                plotlyOutput("Lakes",height=100,width="100%"),
-                plotOutput("SAR",height=100,width="100%"),
-                plotOutput("Birds",height=100,width="100%")))))),            
+                plotlyOutput("Lakes",height=100,width="100%")))))),
+          
+          
           
           ## Engagement ----   
           tabPanel("Engagement",
@@ -76,7 +82,7 @@ shinyUI(
               wellPanel(random_text(nwords = 75)),
               fluidRow(column(9,
               fileInput(label = NULL, 
-                buttonLabel = tags$div("Upload", style = "width: 90px"),        
+                buttonLabel = tags$div("Upload", icon("upload"), style = "width: 90px"),        
                 inputId = "upload_pmp", "", width = "100%",
                 accept = c(".shp", ".dbf", ".sbn", ".sbx", ".shx", ".prj"),
                 multiple = TRUE)),

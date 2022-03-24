@@ -128,3 +128,12 @@ hr {
 .modal-backdrop {
   z-index: 9999;
 }
+
+.btn-compare .btn-default  {
+  margin-top: 10px;
+  color: #33862B;
+}
+
+a {
+  color: #2D602E;
+}

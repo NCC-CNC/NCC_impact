@@ -4,6 +4,7 @@
 property_title_UI <- function(id) {
   ns <- NS(id)
   tagList(
+    br(),
     tags$div(
       class = "property-title",
       textOutput(outputId = ns("property"))

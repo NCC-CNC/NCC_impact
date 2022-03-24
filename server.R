@@ -61,8 +61,8 @@ shinyServer(function(input, output, session) {
 # Listen for map click: --------------------------------------------------------
 
   observeEvent(input$ncc_map_shape_click, {
- 
-    if(is.null(input$ncc_map_shape_click$id)){} 
+    
+    if(is.null(input$ncc_map_shape_click$id) | input$ncc_map_shape_click$group != "Project Mgmt. Plan" ){} 
     
     ## PMP user selection ----
     else { 
@@ -143,8 +143,42 @@ shinyServer(function(input, output, session) {
       shinyjs::enable("report_mod1-run_report")
       shinyjs::enable("compare_tbl")
       shinyjs::enable("compare_plt")
+      
+      observeEvent(input$ncc_map_shape_click, {
+        
+        print(input$ncc_map_shape_click$group)
+        
+        if(is.null(input$ncc_map_shape_click$id) | input$ncc_map_shape_click$group != "User PMP" ){}
+        
+        else {
+      
+        user_pmp <- extracted$user_pmp_mean %>% 
+            dplyr::filter(id == as.numeric(input$ncc_map_shape_click$id))    
+          
+      ## Generate histograms ----
+      shinyjs::show(id = "conditional_plots")
+
+      property_title_SERVER(id = "property_mod2", data=user_pmp)
+      output$Area <- plot_consvar("Area_ha", user_pmp, "ha")
+      output$Forest <- plot_consvar("Forest", user_pmp, "ha")
+      output$Grassland <- plot_consvar("Grassland", user_pmp, "ha")
+      output$Wetland <- plot_consvar("Wetland", user_pmp, "ha")
+      output$River <- plot_consvar("River", user_pmp, "km")
+      output$Lakes <- plot_consvar("Lakes", user_pmp, "ha")
+
+      ## Generate Table ----
+      property_title_SERVER(id = "property_mod1", data=user_pmp)
+      pmp_table_SERVER(id = "pmp_table_mod1",
+                       data = user_pmp,
+                       row_names = species_row_names,
+                       con_values = species_con_values)
     }
-  })
+  }) 
+}})
+  
+  # Comparison modal -----------------------------------------------------------
+  comparison_SERVER(id = "compare_mod1", modal_trigger, compare_tbl, 
+                    compare_plt, reactive(extracted$user_pmp_mean))   
   
   ## Clear user pmp ----
   observeEvent(input$clear_pmp, {
@@ -153,10 +187,6 @@ shinyServer(function(input, output, session) {
     shinyjs::disable("extractions_mod1-run_extractions")
     shinyjs::disable("report_mod1-run_report")
   })
-  
-  # Comparison modal -----------------------------------------------------------
-  comparison_SERVER(id = "compare_mod1", modal_trigger, compare_tbl, compare_plt) 
-
   
 
 # Close server: ---------------------------------------------------------------- 
