@@ -1,22 +1,27 @@
 shinyServer(function(input, output, session) {
 
-  # Get inputs -----------------------------------------------------------------
+# Get inputs: -------------------------------------------------------------------
+
+  ## Conservation values (rasters) ----
+  user_raster <- reactive({ as.character(input$raster_selection) })
   
-  # Conservation values (rasters)
-  user_raster <- reactive({
-    as.character(input$raster_selection)
-  })
-  
-  # PMP user shapefile upload
+  ## PMP user shapefile upload ----
   user_pmp_upload_path <- reactive({input$upload_pmp})
   user_pmp <- read_shp(user_pmp_upload_path) 
-  user_pmp_FLAG <- reactiveVal(0)
-  
-  # Disable extraction run
+
+  ## Disable extraction run ----
   shinyjs::disable("extractions_mod1-run_extractions")
   shinyjs::disable("report_mod1-run_report")
+  # shinyjs::disable("compare_tbl")
+  # shinyjs::disable("compare_plt")
+  
+  ## Comparison model ----
+  modal_trigger <- reactive({ list(input$compare_tbl,input$compare_plt) })
+  compare_tbl <- reactive({ input$compare_tbl })
+  compare_plt <- reactive({ input$compare_plt })
+  
+# Initialize leaflet map: ------------------------------------------------------
 
-  # Initialize leaflet map -----------------------------------------------------
   output$ncc_map <- renderLeaflet({
     leaflet() %>%
       addProviderTiles(providers$Esri.WorldTopoMap, group = "Topographic") %>%
@@ -32,7 +37,7 @@ shinyServer(function(input, output, session) {
       
       addMapPane("pmp_pane", zIndex = 600) %>% # Always top layer
       
-      # Add project mgmt. polygon
+      ## Add project mgmt. polygon ----
       addPolygons(data = PMP_sub,
                   layerId = ~id, # click event id selector
                   group = "Project Mgmt. Plan",
@@ -52,20 +57,20 @@ shinyServer(function(input, output, session) {
                        options = layersControlOptions(collapsed = F))       
       
   })
+  
+# Listen for map click: --------------------------------------------------------
 
-  # PMP selection --------------------------------------------------------------
   observeEvent(input$ncc_map_shape_click, {
  
-   
-    if(is.null(input$ncc_map_shape_click$id)){} # Do nothing if no ID
+    if(is.null(input$ncc_map_shape_click$id)){} 
     
-    else { # -------------------------------------------------------------------
+    ## PMP user selection ----
+    else { 
     
-    # Project mgmt. plan user selection
     user_pmp <- PMP_tmp %>% 
       dplyr::filter(id == as.numeric(input$ncc_map_shape_click$id))
     
-    # Generate histograms
+    ## Generate histograms ----
     shinyjs::show(id = "conditional_plots")
     
     property_title_SERVER(id = "property_mod2", data=user_pmp)
@@ -76,7 +81,7 @@ shinyServer(function(input, output, session) {
     output$River <- plot_consvar("River", user_pmp, "km")
     output$Lakes <- plot_consvar("Lakes", user_pmp, "ha")
     
-    # Generate Table
+    ## Generate Table ----
     property_title_SERVER(id = "property_mod1", data=user_pmp)
     pmp_table_SERVER(id = "pmp_table_mod1", 
                      data = user_pmp,
@@ -86,7 +91,8 @@ shinyServer(function(input, output, session) {
   # Close map-click
   })
     
-  # Update map with conservation value -----------------------------------------
+# Update map with conservation theme: ------------------------------------------
+
   observeEvent(user_raster(),{
     
     if(user_raster() != F) {
@@ -114,44 +120,44 @@ shinyServer(function(input, output, session) {
     
   })
   
-#-------------------------------------------------------------------------------
+# Display user PMP / extract themes: -------------------------------------------
 
-  # Display user pmp boundaries
+  ## Listen for shp upload ----
   observeEvent(user_pmp_upload_path(), {
     
     display_shp(user_pmp, "ncc_map")
     
-    # Enable extract impact themes button
+    # Enable extract impact themes button 
     shinyjs::enable("extractions_mod1-run_extractions")
     
     })
   
-  # Extract themes to user pmp and update map
+  ## Extract themes to user pmp, update map ----
   proxy <- leafletProxy("ncc_map")
-  extracted  <- extractions_SERVER(id = "extractions_mod1", user_pmp, feat_stack, spp_stack, proxy)
+  extracted  <- extractions_SERVER(id = "extractions_mod1", user_pmp, 
+                                   feat_stack, spp_stack, proxy)
   
-  # Clear user pmp
+  ## Extractions completed ----
+  observeEvent(extracted$trigger, {
+    if(extracted$flag == 1){
+      shinyjs::enable("report_mod1-run_report")
+      shinyjs::enable("compare_tbl")
+      shinyjs::enable("compare_plt")
+    }
+  })
+  
+  ## Clear user pmp ----
   observeEvent(input$clear_pmp, {
     clear_shp("upload_pmp", "ncc_map", "User PMP")
     # Disable run button
     shinyjs::disable("extractions_mod1-run_extractions")
     shinyjs::disable("report_mod1-run_report")
-    })  
-  
-  # Enable report button
-  observeEvent(extracted$trigger, {
-    
-    if(extracted$flag == 1){
-      shinyjs::enable("report_mod1-run_report")
-      
-      print(extracted$user_pmp)
-      
-      
-    }
-    
   })
   
-#-------------------------------------------------------------------------------  
+  # Comparison modal -----------------------------------------------------------
+  comparison_SERVER(id = "compare_mod1", modal_trigger, compare_tbl, compare_plt) 
+
   
-  # Close server
+
+# Close server: ---------------------------------------------------------------- 
 })

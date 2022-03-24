@@ -1,8 +1,8 @@
 shinyUI(
   navbarPage(
-    "NCC Project Evaluation",
-    tabPanel(
-      "Tool",
+    "NCC Conservation Technology",
+    tabPanel( class="pmp_tool",
+      "Project Evaluation",
       tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
       useShinyFeedback(),
       useShinyjs(),
@@ -10,18 +10,30 @@ shinyUI(
       # Side-panel:-------------------------------------------------------------
       sidebarLayout(
         sidebarPanel(class = "side",
+          ## Overview ----          
           tabsetPanel(
-            tabPanel("Overview",#-----------------------------------------------
+            tabPanel("Overview",
             br(),
-            wellPanel(random_text(nwords = 150))),
+            wellPanel(random_text(nwords = 150)),
             
-          tabPanel("Table",#----------------------------------------------------
+            # Logo 
+            img(class='logo', src='logos/stacked_logo_rgb_en.png')),
+          
+          ## Table ----     
+          tabPanel("Table",
             br(),
+            actionButton(style = "float: right;", inputId = "compare_tbl", 
+                         label = "Compare PMP", icon = icon("sliders-h")),
+            
             property_title_UI(id = "property_mod1"),
             pmp_table_UI(id = "pmp_table_mod1"), width="100%"),
-
-            tabPanel("Plots", #-------------------------------------------------
+          
+          ## Plots ----  
+          tabPanel("Plots", 
              br(),
+             actionButton(style = "float: right;", inputId = "compare_plt", 
+                          label = "Compare PMP", icon = icon("sliders-h")),
+             
              hidden(div(id = "conditional_plots", 
                         withSpinner(color = "#33862B", size = 1,
               tagList(
@@ -34,38 +46,30 @@ shinyUI(
                 plotlyOutput("Lakes",height=100,width="100%"),
                 plotOutput("SAR",height=100,width="100%"),
                 plotOutput("Birds",height=100,width="100%")))))),            
-            
-            tabPanel("Report",#-------------------------------------------------
-              br(),
-              wellPanel(random_text(nwords = 75)),
-              actionButton("view_report", "View Report", width = "100%")),
           
-          tabPanel("Engagement",#------------------------------------------------
+          ## Engagement ----   
+          tabPanel("Engagement",
                    br(),
-                   wellPanel(random_text(nwords = 75))),
-          
-            
-            # Logo always on bottom of side panel
-            img(class='logo', src='logos/stacked_logo_rgb_en.png')
+                   wellPanel(random_text(nwords = 75)))
           
           # Close tabsetPanel    
           )
         # Close sidebarPanel    
         ),
 
-        # Main-panel: map ------------------------------------------------------
+        # Main-panel: ----------------------------------------------------------
         mainPanel(
           class = "main",
 
-          # Main leaflet map,
+          ## NCC map ----
           leafletOutput(outputId = "ncc_map", height = "calc(100vh - 100px)", width = "100%"),
           
-          # Main leaflet map, sidebars------------------------------------------
+          ## Map sidebars-------------------------------------------------------
           sidebar_tabs(
             id = "map_sidebar",
             list(icon("upload")),
             
-            # Upload shapefile
+            ### Upload shapefile ----
             sidebar_pane(
               title = "New Property Assessment", id = "upload_sp", icon = icon("caret-right"),
               br(),
@@ -87,14 +91,18 @@ shinyUI(
           # Close map-upload sidebar
           ),
 
-          # Raster tiles panel--------------------------------------------------
+          # Conservation themes -------------------------------------------------
           tags$div(
             class = "raster-controls",
             h4(class = "raster-title", "Impact Themes"),
             selectInput(
               inputId = "raster_selection", "", width = "100%",
               choices = c("No Selection" = F, "Forest %" = "forest", "Grassland" = "grassland", 
-                          "Wetland" = "wetland", "River" = "river", "Lakes" = "Lakes")))          
+                          "Wetland" = "wetland", "River" = "river", "Lakes" = "Lakes"))),
+          
+          # Comparison modal ---------------------------------------------------
+          comparison_UI(id = "compare_mod1")
+          
         # Close mainPanel  
         )
       # Close sidebarLayout
@@ -103,5 +111,5 @@ shinyUI(
     )
   # Close navbarPage
   )
-# Close UI
+# Close UI ----
 )

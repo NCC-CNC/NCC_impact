@@ -21,6 +21,7 @@ library(terra)
 library(dplyr)
 library(tidyr)
 library(purrr)
+library(shinyBS)
 
 # Read-in basedata -------------------------------------------------------------
 load(file.path("data", "03_clean", "basedata.RData"))
@@ -32,6 +33,7 @@ reg_goals <- read_csv(file.path("data", "sheets", "Regional_goals.csv"))
 source(file.path("scripts", "mod_tables.R"))
 source(file.path("scripts", "mod_extractions.R"))
 source(file.path("scripts", "mod_report.R"))
+source(file.path("scripts", "mod_comparison.R"))
 
 # Source functions -------------------------------------------------------------
 source(file.path("scripts", "fct_popup.R"))
@@ -39,7 +41,7 @@ source(file.path("scripts", "fct_plots.R"))
 source(file.path("scripts", "fct_shpupload.R"))
 
 # Source conservation themes ---------------------------------------------------
-source(file.path("scripts", "01_load.R"))
+source(file.path("scripts", "server_load_themes.R"))
 
 # Species table inputs ---------------------------------------------------------
 species_row_names <- c("Region", "Area", "Species at Risk (ECCC)", 

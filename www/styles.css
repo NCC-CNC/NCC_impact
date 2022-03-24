@@ -110,3 +110,21 @@ hr {
 .progress-bar {
   background-color: #33862B;
 }
+
+.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover {
+  color: #FFF;
+  background-color: #33862B;
+  
+}
+
+.modal-lg {
+  width: 90vw;
+}
+
+.modal.sbs-modal {
+  z-index: 99999;
+}
+
+.modal-backdrop {
+  z-index: 9999;
+}

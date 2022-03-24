@@ -13,7 +13,7 @@ extractions_SERVER <- function(id, user_pmp, feat_stack, spp_stack, proxy) {
   moduleServer(id, function(input, output, session) {
     
     # Return 
-    to_return <- reactiveValues(trigger = NULL, flag = NULL, variable = NULL )
+    to_return <- reactiveValues(trigger = NULL, flag = NULL, user_pmp_mean = NULL )
     
     observeEvent(input$run_extractions, {
       
@@ -23,7 +23,7 @@ extractions_SERVER <- function(id, user_pmp, feat_stack, spp_stack, proxy) {
                      
      tryCatch({   
        
-       # Feature themes  
+       # Feature themes---------------------------------------------------------  
        id_ <<- showNotification("... feature themes", duration = 0, closeButton=close)
        
        # Extract
@@ -32,7 +32,7 @@ extractions_SERVER <- function(id, user_pmp, feat_stack, spp_stack, proxy) {
        user_pmp_feat <- user_pmp_feat %>%
          mutate(across(everything(), ~ replace_na(.x, 0)))
        
-       # Species themes
+       # Species themes---------------------------------------------------------
        incProgress(2)
        removeNotification(id_)
        id_ <<- showNotification("... species themes", duration = 0, closeButton=close)
@@ -69,20 +69,15 @@ extractions_SERVER <- function(id, user_pmp, feat_stack, spp_stack, proxy) {
                      highlightOptions = highlightOptions(weight = 3, 
                                                          color = '#00ffd9')) 
        
-       # Enable generate report button
-       shinyjs::enable("run_report")
-       
-
-       
        # Finish progress
        incProgress(3)
        removeNotification(id_)
-       showNotification("... Finished!", duration = 0, closeButton=TRUE, type = 'message')
+       showNotification("... Extractions Completed!", duration = 0, closeButton=TRUE, type = 'message')
        
        # Populate return objects
        to_return$flag <- 1
        to_return$trigger <- input$run_extractions
-       to_return$user_pmp <- user_pmp_mean
+       to_return$user_pmp_mean <- user_pmp_mean
        
      # Close try 
      },
@@ -101,7 +96,6 @@ extractions_SERVER <- function(id, user_pmp, feat_stack, spp_stack, proxy) {
   
   # Return flag that indicates that the extractions ran
     return(to_return)
-
 
 # Close module server  
 })
