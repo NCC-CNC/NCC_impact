@@ -1,0 +1,5 @@
+library(sf)
+parcels <- read_sf(file.path("data", "01_raw", "NCC", "Parcels_20210531_Achievements_prjEA_RRupdate.shp")) 
+parcels_wgs <- st_transform(parcels, crs = st_crs(4326))
+map_exent <- st_bbox(parcels_wgs)
+names(map_exent) <- c("lng1", "lat1", "lng2", "lat2")
