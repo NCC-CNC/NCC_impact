@@ -8,7 +8,7 @@ shinyServer(function(input, output, session) {
   # Initialize leaflet map -----------------------------------------------------
   output$ncc_map <- renderLeaflet({
     leaflet() %>%
-      addTiles() %>%
+      addProviderTiles(providers$Esri.WorldStreetMap) %>%
       fitBounds(-141.00002, 41.68132, -52.68001, 76.59341) %>%
       addSidebar(
         id = "map_sidebar",
