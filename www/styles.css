@@ -85,13 +85,13 @@
 .property-title {
   font-weight: 800;
   font-family: Verdana;
-  text-align: center;
+  text-align: left;
   font-size: 16px;
   margin-top: 18px;
   margin-bottom: 10px;
+  max-width: 400px;
 }
   
-
 hr {
   margin-top: 0px;
 }

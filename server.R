@@ -8,6 +8,9 @@ shinyServer(function(input, output, session) {
   ## PMP user shapefile upload ----
   user_pmp_upload_path <- reactive({input$upload_pmp})
   user_pmp <- read_shp(user_pmp_upload_path) 
+  
+  ## Map click
+  map_click <- reactive({input$ncc_map_shape_click})
 
   ## Disable extraction run ----
   shinyjs::disable("extractions_mod1-run_extractions")
@@ -58,17 +61,16 @@ shinyServer(function(input, output, session) {
       
   })
   
-# Listen for map click: --------------------------------------------------------
+# Listen for map click | pre-loaded PMPs: --------------------------------------
 
-  observeEvent(input$ncc_map_shape_click, {
+  observeEvent(map_click(), {
     
-    if(is.null(input$ncc_map_shape_click$id) | input$ncc_map_shape_click$group != "Project Mgmt. Plan" ){} 
+    if(is.null(map_click()$id) | map_click()$group != "Project Mgmt. Plan" ){} 
     
-    ## PMP user selection ----
     else { 
     
-    user_pmp <- PMP_tmp %>% 
-      dplyr::filter(id == as.numeric(input$ncc_map_shape_click$id))
+    ## PMP user selection ----
+    user_pmp <- PMP_tmp %>% dplyr::filter(id == as.numeric(map_click()$id))
     
     ## Generate histograms ----
     shinyjs::show(id = "conditional_plots")
@@ -85,8 +87,9 @@ shinyServer(function(input, output, session) {
     property_title_SERVER(id = "property_mod1", data=user_pmp)
     pmp_table_SERVER(id = "pmp_table_mod1", 
                      data = user_pmp,
-                     row_names = species_row_names,
-                     con_values = species_con_values)
+                     attributes = pmp_attributes,
+                     con_values = pmp_values,
+                     pivot_wide = F)
     }  
   # Close map-click
   })
@@ -144,41 +147,41 @@ shinyServer(function(input, output, session) {
       shinyjs::enable("compare_tbl")
       shinyjs::enable("compare_plt")
       
-      observeEvent(input$ncc_map_shape_click, {
+      ## Listen for map click | new PMPs: --------------------------------------
+      observeEvent(map_click(), {
         
-        print(input$ncc_map_shape_click$group)
-        
-        if(is.null(input$ncc_map_shape_click$id) | input$ncc_map_shape_click$group != "User PMP" ){}
+        if(is.null(map_click()$id) | map_click()$group != "User PMP" ){}
         
         else {
-      
-        user_pmp <- extracted$user_pmp_mean %>% 
-            dplyr::filter(id == as.numeric(input$ncc_map_shape_click$id))    
+        
+        user_pmp_new <- extracted$user_pmp_mean %>% 
+            dplyr::filter(id == as.numeric(map_click()$id))    
           
       ## Generate histograms ----
       shinyjs::show(id = "conditional_plots")
 
-      property_title_SERVER(id = "property_mod2", data=user_pmp)
-      output$Area <- plot_consvar("Area_ha", user_pmp, "ha")
-      output$Forest <- plot_consvar("Forest", user_pmp, "ha")
-      output$Grassland <- plot_consvar("Grassland", user_pmp, "ha")
-      output$Wetland <- plot_consvar("Wetland", user_pmp, "ha")
-      output$River <- plot_consvar("River", user_pmp, "km")
-      output$Lakes <- plot_consvar("Lakes", user_pmp, "ha")
+      property_title_SERVER(id = "property_mod2", user_pmp_new)
+      output$Area <- plot_consvar("Area_ha", user_pmp_new, "ha")
+      output$Forest <- plot_consvar("Forest", user_pmp_new, "ha")
+      output$Grassland <- plot_consvar("Grassland", user_pmp_new, "ha")
+      output$Wetland <- plot_consvar("Wetland", user_pmp_new, "ha")
+      output$River <- plot_consvar("River", user_pmp_new, "km")
+      output$Lakes <- plot_consvar("Lakes", user_pmp_new, "ha")
 
       ## Generate Table ----
-      property_title_SERVER(id = "property_mod1", data=user_pmp)
-      pmp_table_SERVER(id = "pmp_table_mod1",
-                       data = user_pmp,
-                       row_names = species_row_names,
-                       con_values = species_con_values)
+      property_title_SERVER(id = "property_mod1", data=user_pmp_new)
+      pmp_table_SERVER(id = "pmp_table_mod1", 
+                       data = user_pmp_new,
+                       attributes = pmp_attributes,
+                       con_values = pmp_values,
+                       pivot_wide = F)
     }
   }) 
 }})
   
   # Comparison modal -----------------------------------------------------------
   comparison_SERVER(id = "compare_mod1", modal_trigger, compare_tbl, 
-                    compare_plt, reactive(extracted$user_pmp_mean))   
+                    compare_plt, reactive(extracted$user_pmp_mean), map_click)   
   
   ## Clear user pmp ----
   observeEvent(input$clear_pmp, {

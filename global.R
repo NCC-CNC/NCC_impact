@@ -44,11 +44,11 @@ source(file.path("scripts", "fct_shpupload.R"))
 source(file.path("scripts", "server_load_themes.R"))
 
 # Species table inputs ---------------------------------------------------------
-species_row_names <- c("Region", "Area", "Species at Risk (ECCC)", 
+pmp_attributes <- c("Property", "Name", "Region", "Area", "Species at Risk (ECCC)", 
                        "Amphibians (IUCN)", "Birds (IUCN)", "Mammals (IUCN)", 
                        "Reptiles (IUCN)","Species at Risk (NSC)", "Endemics (NSC)")
 
-species_con_values <- c("REGION","Area_ha","Species_at_Risk_ECCC",
+pmp_values <- c("PROPERTY_N", "NAME", "REGION","Area_ha","Species_at_Risk_ECCC",
                         "Amphibians_IUCN","Birds_IUCN","Mammals_IUCN",
                         "Reptiles_IUCN","Species_at_Risk_NSC",
                         "Endemics_NSC")

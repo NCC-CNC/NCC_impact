@@ -26,12 +26,10 @@ shinyUI(
                     actionButton(style = "float: right;", inputId = "compare_tbl", 
                                  label = "Compare", icon = icon("sliders-h"))),                   
 
-            br(),
             property_title_UI(id = "property_mod1"),
             pmp_table_UI(id = "pmp_table_mod1"), width="100%"),
           
-          
-          
+
           ## Plots ----  
           tabPanel("Plots", 
                   

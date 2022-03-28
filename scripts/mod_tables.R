@@ -29,13 +29,14 @@ pmp_table_UI <- function(id) {
   )
 }
 
-pmp_table_SERVER <- function(id, data, row_names, con_values) {
+pmp_table_SERVER <- function(id, data, attributes, con_values, pivot_wide = F) {
   moduleServer(id, function(input, output, session) {
     output$pmp_table <- renderText({
       PMP_table(
         data = data,
-        row_names = row_names,
-        con_values = con_values
+        attributes = attributes,
+        con_values = con_values,
+        pivot_wide = pivot_wide
       )
     })
   })
