@@ -109,7 +109,8 @@ names(spp_stack) <- c(
 # Extract raster variables to PMP ----------------------------------------------
 
 # Environmental variables
-PMP_feat_stack_mean <- exact_extract(feat_stack, PMP, fun = "sum", force_df = TRUE)
+PMP_feat_stack_mean <- exact_extract(feat_stack, PMP, fun = "sum", force_df = TRUE) %>%
+  round(1)
 names(PMP_feat_stack_mean) <- gsub("sum.", "", names(PMP_feat_stack_mean))
 PMP_feat_stack_mean <- PMP_feat_stack_mean %>%
   mutate(
@@ -117,7 +118,8 @@ PMP_feat_stack_mean <- PMP_feat_stack_mean %>%
   )
 
 # Species variables
-PMP_spp_stack_mean <- exact_extract(spp_stack, PMP, fun = "max", force_df = TRUE)
+PMP_spp_stack_mean <- exact_extract(spp_stack, PMP, fun = "max", force_df = TRUE) %>%
+  round(1)
 names(PMP_spp_stack_mean) <- gsub("max.", "", names(PMP_spp_stack_mean))
 PMP_spp_stack_mean <- PMP_spp_stack_mean %>%
   mutate(
@@ -136,31 +138,6 @@ PMP_tmp$id <- 1:nrow(PMP_tmp)
 PMP <- PMP %>% st_transform(crs = st_crs(4326))
 
 # # Save clean data --------------------------------------------------------------
-# 
-# rasters <- list(
-#   "Forest" = frst, "Grassland" = gras, "Wetland" = wetl, "River" = rivr,
-#   "Lakes" = laks, "Shoreline" = shrl, "Climate_velocity" = cfor,
-#   "Climate_refugia" = cref, "Carbon_current" = csta,
-#   "Carbon_potential" = cseq, "Freshwater" = fwat, "Recreation" = recr,
-#   "Species_at_Risk_ECCC" = SAR, "Amphibians_IUCN" = amph,
-#   "Birds_IUCN" = bird, "Mammals_IUCN" = mamm, "Reptiles_IUCN" = rept,
-#   "Species_at_Risk_NSC" = SAR_NSC, "Endemics_NSC" = END_NSC,
-#   "Biodiversity_NSC" = SPP_NSC
-# )
-# 
-# # Project to WGS 84
-# rasters_wgs <- purrr::map(rasters, .f = ~ {
-#   terra::project(.x, "epsg:4326")
-# })
-# 
-# # Set 0 to NA and save to disk to tile in QGIS
-# purrr::map2(
-#   rasters_wgs,
-#   names(rasters_wgs),
-#   ~ {
-#     terra::classify(.x, cbind(0, NA), filename = file.path("data", "03_clean", "themes", paste0(.y, ".tif")))
-#   }
-# )
 
 # Subset PMP for dev purposes
 PMP_sub <- PMP_tmp %>% filter(REGION == "Alberta Region")

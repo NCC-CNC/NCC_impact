@@ -15,8 +15,8 @@ shinyServer(function(input, output, session) {
   ## Disable extraction run ----
   shinyjs::disable("extractions_mod1-run_extractions")
   shinyjs::disable("report_mod1-run_report")
-  # shinyjs::disable("compare_tbl")
-  # shinyjs::disable("compare_plt")
+  shinyjs::disable("compare_tbl")
+  shinyjs::disable("compare_plt")
   
   ## Comparison model ----
   modal_trigger <- reactive({ list(input$compare_tbl,input$compare_plt) })
@@ -76,20 +76,19 @@ shinyServer(function(input, output, session) {
     shinyjs::show(id = "conditional_plots")
     
     property_title_SERVER(id = "property_mod2", data=user_pmp)
-    output$Area <- plot_consvar("Area_ha", user_pmp, "ha")
-    output$Forest <- plot_consvar("Forest", user_pmp, "ha")
-    output$Grassland <- plot_consvar("Grassland", user_pmp, "ha")
-    output$Wetland <- plot_consvar("Wetland", user_pmp, "ha")
-    output$River <- plot_consvar("River", user_pmp, "km")
-    output$Lakes <- plot_consvar("Lakes", user_pmp, "ha")
+    output$Area <- plot_theme("Area_ha", user_pmp, goals_csv, "Area (ha)")
+    output$Forest <- plot_theme("Forest", user_pmp, goals_csv, "Forest (ha)")
+    output$Grassland <- plot_theme("Grassland", user_pmp, goals_csv, "Grassland (ha)")
+    output$Wetland <- plot_theme("Wetland", user_pmp, goals_csv, "Wetland (ha)")
+    output$River <- plot_theme("River", user_pmp, goals_csv, "River (km)")
+    output$Lakes <- plot_theme("Lakes", user_pmp, goals_csv, "Lakes (ha)")
     
     ## Generate Table ----
     property_title_SERVER(id = "property_mod1", data=user_pmp)
     pmp_table_SERVER(id = "pmp_table_mod1", 
                      data = user_pmp,
                      attributes = pmp_attributes,
-                     con_values = pmp_values,
-                     pivot_wide = F)
+                     con_values = pmp_values)
     }  
   # Close map-click
   })
@@ -161,34 +160,36 @@ shinyServer(function(input, output, session) {
       shinyjs::show(id = "conditional_plots")
 
       property_title_SERVER(id = "property_mod2", user_pmp_new)
-      output$Area <- plot_consvar("Area_ha", user_pmp_new, "ha")
-      output$Forest <- plot_consvar("Forest", user_pmp_new, "ha")
-      output$Grassland <- plot_consvar("Grassland", user_pmp_new, "ha")
-      output$Wetland <- plot_consvar("Wetland", user_pmp_new, "ha")
-      output$River <- plot_consvar("River", user_pmp_new, "km")
-      output$Lakes <- plot_consvar("Lakes", user_pmp_new, "ha")
+      output$Area <- plot_theme("Area_ha", user_pmp_new, goals_csv, "Area (ha)")
+      output$Forest <- plot_theme("Forest", user_pmp_new, goals_csv, "Forest (ha)")
+      output$Grassland <- plot_theme("Grassland", user_pmp_new, goals_csv, "Grassland (ha)")
+      output$Wetland <- plot_theme("Wetland", user_pmp_new, goals_csv, "Wetland (ha)")
+      output$River <- plot_theme("River", user_pmp_new, goals_csv, "River (km)")
+      output$Lakes <- plot_theme("Lakes", user_pmp_new, goals_csv, "Lakes (ha)")
 
       ## Generate Table ----
       property_title_SERVER(id = "property_mod1", data=user_pmp_new)
       pmp_table_SERVER(id = "pmp_table_mod1", 
                        data = user_pmp_new,
                        attributes = pmp_attributes,
-                       con_values = pmp_values,
-                       pivot_wide = F)
+                       con_values = pmp_values)
     }
   }) 
 }})
   
   # Comparison modal -----------------------------------------------------------
   comparison_SERVER(id = "compare_mod1", modal_trigger, compare_tbl, 
-                    compare_plt, reactive(extracted$user_pmp_mean), map_click)   
+                    compare_plt, reactive(extracted$user_pmp_mean), 
+                    map_click, goals_csv)   
   
   ## Clear user pmp ----
   observeEvent(input$clear_pmp, {
     clear_shp("upload_pmp", "ncc_map", "User PMP")
-    # Disable run button
+    # Disable buttons
     shinyjs::disable("extractions_mod1-run_extractions")
     shinyjs::disable("report_mod1-run_report")
+    shinyjs::disable("compare_tbl")
+    shinyjs::disable("compare_plt")
   })
   
 

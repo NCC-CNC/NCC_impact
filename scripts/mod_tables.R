@@ -4,7 +4,6 @@
 property_title_UI <- function(id) {
   ns <- NS(id)
   tagList(
-    br(),
     tags$div(
       class = "property-title",
       textOutput(outputId = ns("property"))
@@ -25,18 +24,17 @@ property_title_SERVER <- function(id, data) {
 pmp_table_UI <- function(id) {
   ns <- NS(id)
   tagList(
-    htmlOutput(outputId = ns("pmp_table"))
+    DTOutput(outputId = ns("pmp_table"))
   )
 }
 
-pmp_table_SERVER <- function(id, data, attributes, con_values, pivot_wide = F) {
+pmp_table_SERVER <- function(id, data, attributes, con_values) {
   moduleServer(id, function(input, output, session) {
-    output$pmp_table <- renderText({
+    output$pmp_table <- renderDT({
       PMP_table(
         data = data,
         attributes = attributes,
-        con_values = con_values,
-        pivot_wide = pivot_wide
+        con_values = con_values
       )
     })
   })

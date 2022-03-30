@@ -32,7 +32,7 @@ shinyUI(
 
           ## Plots ----  
           tabPanel("Plots", 
-                  
+          br(),        
          tags$div(class= "btn-compare",
                   actionButton(style = "float: right;", inputId = "compare_plt", 
                                label = "Compare", icon = icon("sliders-h"))),                    

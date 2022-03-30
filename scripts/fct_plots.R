@@ -1,5 +1,6 @@
 
 bar1 <- function(current = NULL, potential = NULL, goal = NULL, label = NULL) {
+  
   # create data
   d <- tibble(
     category = c("Current", "Potential", "Gap"),
@@ -38,7 +39,7 @@ bar1 <- function(current = NULL, potential = NULL, goal = NULL, label = NULL) {
       axis.text.y = element_blank(),
       axis.ticks.y = element_blank()
     ) +
-    geom_hline(yintercept = d$value0[3], colour = "#636363", size = 1.2)
+    geom_hline(yintercept = goal, colour = "#636363", size = 1.2)
 
   ggplotly(p) %>% config(displayModeBar = F)
 
@@ -47,16 +48,43 @@ bar1 <- function(current = NULL, potential = NULL, goal = NULL, label = NULL) {
 
 
 # User this function inside shiny
-plot_consvar <- function(consvar, user_pmp, unit) {
+plot_theme <- function(theme, sf, goals_csv, label = NULL) {
 
     renderPlotly({
-    bar1(current = reg_goals %>% filter(Regions == user_pmp$Regions) %>%
-           filter(Category == "current") %>% pull(consvar), 
-         potential = user_pmp[[consvar]], 
-         goal = reg_goals %>% filter(Regions == user_pmp$Regions) %>%
-           filter(Category == "goal") %>% pull(consvar),
-         label = paste0(consvar, " (",unit,")")
-    )
+      
+    bar1(current = goals_csv %>% 
+           filter(Regions == sf$Regions) %>%
+           filter(Category == "current") %>% 
+           pull(theme) %>% round(0), 
+         
+         potential = round (sf[[theme]], 1), 
+         
+         goal = goals_csv %>% 
+           filter(Regions == sf$Regions) %>%
+           filter(Category == "goal") %>% 
+           pull(theme) %>% round(0),
+         
+         label = label)
   })  
 } 
+
+# Test plots -------------------------------------------------------------------
+
+# pmp_selection <- PMP_sub %>% dplyr::filter(NAME == 'Boreal A9 (outside of Birch River Wildland Park)')
+# 
+# current <- goals_csv %>%
+#   filter(Regions == pmp_selection$Regions) %>%
+#   filter(Category == "current") %>%
+#   pull("Forest")
+# 
+# potential <- pmp_selection[["Forest"]]
+# 
+# goal <- goals_csv %>%
+#   filter(Regions == pmp_selection$Regions) %>%
+#   filter(Category == "goal") %>%
+#   pull("Forest")
+# 
+# 
+# bar1(current, potential, goal)
+     
 

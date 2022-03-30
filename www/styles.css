@@ -118,11 +118,15 @@ hr {
 }
 
 .modal-lg {
-  width: 90vw;
+  width: 75vw;
 }
 
 .modal.sbs-modal {
   z-index: 99999;
+}
+
+.modal-content {
+  overflow-x: scroll;
 }
 
 .modal-backdrop {
@@ -130,10 +134,14 @@ hr {
 }
 
 .btn-compare .btn-default  {
-  margin-top: 10px;
   color: #33862B;
 }
 
 a {
   color: #2D602E;
+}
+
+.theme-selection {
+  font-weight: 800;
+  text-align: center !important;
 }
